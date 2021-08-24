@@ -4,10 +4,13 @@ const BookingSchema = new mongoose.Schema({
     id: {
         type: Number,
     },
-    guest: {
+    numberOfGuests: {
         type: Number,
     },
-    name: {
+    firstName: {
+        type: String
+    },
+    lastName: {
         type: String
     },
     email: {
@@ -19,7 +22,10 @@ const BookingSchema = new mongoose.Schema({
     date: {
         type: Date
     },
-    time: { 
+    time: {
+        type: Number
+    },
+    specialRequest: {
         type: String
     }
 })
