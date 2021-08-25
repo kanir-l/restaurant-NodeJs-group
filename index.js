@@ -1,62 +1,45 @@
 const express = require('express')
-const mongoose = require('mongoose')
 const BookingModel = require('./models/BookingSchema')
-//const path = require('path')
 
-const app = express()
+const connectDB = require("./database/connection");
+// const path = require('path');
+const app = express();
+require("dotenv").config({ path: "./config.env" });
 
-// Serve the static files from the React app
-/* app.use(express.static(path.join(__dirname, 'client/build'))); */
 
-// DATABASE connection
-/* mongoose.connect("mongodb+srv://fed20mi:fed20mi@cluster0.dz7ob.mongodb.net/restaurent?retryWrites=true&w=majority", options, (err) => {
-    if(err) {
-        console.log(err)
-        return
-    }
-        app.listen(8080, () => {
-            console.log("TodoCard App is set")
-        })
-})  */
+// *** MongoDB connection ***
+connectDB();
 
-/* mongoose.connect("mongodb+srv://restaurant:admin@cluster0.7g34g.mongodb.net/Restaurant?retryWrites=true&w=majority", {usedNewUrlParser: true})
+const PORT = process.env.PORT || 8080;
 
- */
 
-mongoose.connect("mongodb+srv://restaurant:admin@cluster0.7g34g.mongodb.net/Restaurant?retryWrites=true&w=majority", 
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    }, (err) => {
-        if (err) return 
-    },
-    app.listen(8080, ()=> console.log("Server up and running"))
-)
+// *** Create Local Server ***
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
 
 // GET - An api endpoint for /ADMIN
-app.get('/admin', async (req, res) => {
+app.get('/admin', async(req, res) => {
     try {
         const bookings = await BookingModel.find()
         res.json(bookings);
     } catch (err) {
         console.log(err)
     }
-});  
+});
 
 // POST - An api endpoint for /RESERVATION
-app.get('/reservations', async (req, res) => {
+app.get('/reservations', async(req, res) => {
     try {
-        const booking = new BookingModel(
-            {
-                id: 2,
-                guest: 3,
-                date: new Date(),
-                time: 21.00,
-                name: "Dada dada",
-                phone: 123456,
-                email: "dada@info.com"
-            }
-        )
+        const booking = new BookingModel({
+            id: 2,
+            guest: 3,
+            date: new Date(),
+            time: 21.00,
+            name: "Dada dada",
+            phone: 123456,
+            email: "dada@info.com"
+        })
         await booking.save()
         res.send(booking)
     } catch (err) {
@@ -79,7 +62,7 @@ app.get('/admin', async (req, res) => {
     ]
     booking.send()
     res.json()
-});  */  
+});  */
 
 
 // Handles any requests that don't match the ones above
