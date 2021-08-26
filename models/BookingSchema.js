@@ -7,23 +7,23 @@ const BookingSchema = new mongoose.Schema({
     numberOfGuests: {
         type: Number,
     },
+    date: {
+        type: Date
+    },
+    time: {
+        type: Number
+    },
     firstName: {
         type: String
     },
     lastName: {
         type: String
     },
-    email: {
-        type: String
-    },
     phone: {
         type: String
     },
-    date: {
-        type: Date
-    },
-    time: {
-        type: Number
+    email: {
+        type: String
     },
     specialRequest: {
         type: String
