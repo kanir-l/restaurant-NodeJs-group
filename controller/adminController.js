@@ -1,7 +1,6 @@
-const express = require('express')
+const express = require("express");
 const BookingModel = require('../models/BookingSchema')
 // const path = require('path')
-const app = express()
 
 // GET/READ - An api endpoint for /ADMIN
 const renderBookingsAdmin = async(req, res) => {
