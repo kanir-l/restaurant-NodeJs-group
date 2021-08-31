@@ -1,10 +1,18 @@
 const express = require('express')
+const cors = require('cors')
+const bodyParser = require('body-parser')
 const connectDB = require("./database/connection");
 require("dotenv").config({ path: "./config.env" });
 const adminRoute = require("./routes/adminRoute");
 const reservationRoute = require("./routes/reservationRoute");
 // const path = require('path');
 const app = express();
+app.use(cors())
+
+app.use( bodyParser.json() );    
+app.use(bodyParser.urlencoded({    
+  extended: true
+}))
 
 // *** MongoDB connection ***
 connectDB();
