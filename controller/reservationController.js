@@ -7,13 +7,16 @@ const eightteenChecking = async(req, res) => {
     const bookings = await BookingModel.find()
 
     // Filter those bookings with the requested date 
-    const dateInputValue = "Aug 27 2021" // FROM THE USER
+    const dateInputValue = req.body.requestedDate
     const hitDateBookings = bookings.filter(function (booking) {
         return booking.date.toString().includes(dateInputValue)
     })
 
+    console.log(req.body.requestedNoOfGuests)
+    console.log(req.body.requestedDate)
+
     // Calulating by the number of guests requested 
-    const guestInputValue = 90 // FROM THE USER
+    const guestInputValue = req.body.requestedNoOfGuests 
     const amountOfTables = guestInputValue / 6
     const totalAmoutOfTables = Math.ceil(amountOfTables)
 
@@ -35,6 +38,7 @@ const eightteenChecking = async(req, res) => {
     } catch (err) {
         console.log(err)
     }
+
 }
 
 /* CHECKING availability at 21:00 with the API /reservations/checkingTwentyone */
@@ -42,13 +46,13 @@ const twentyoneChecking = async(req, res) => {
     const bookings = await BookingModel.find()
 
     // Filter those bookings with the requested date 
-    const dateInputValue = "Aug 27 2021" // FROM THE USER
+    const dateInputValue = req.body.requestedDate
     const hitDateBookings = bookings.filter(function (booking) {
         return booking.date.toString().includes(dateInputValue)
     })
 
     // Calulating by the number of guests requested 
-    const guestInputValue = 10 // FROM THE USER
+    const guestInputValue = req.body.requestedNoOfGuests 
     const amountOfTables = guestInputValue / 6
     const totalAmoutOfTables = Math.ceil(amountOfTables)
 
@@ -65,7 +69,10 @@ const twentyoneChecking = async(req, res) => {
             return false
         } else {
             console.log("Yes, at 21:00 is available to book")
-            return true
+           /*  return res.json({
+                avalable: true,
+                timeSlot: '21:00'
+            }) */
         }
     } catch (err) {
         console.log(err)
