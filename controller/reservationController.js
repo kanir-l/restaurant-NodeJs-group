@@ -5,20 +5,17 @@ const BookingModel = require('../models/BookingSchema')
 /* CHECKING availability at 18:00 with the API /reservations/checkingEightteen */
 const eightteenChecking = async(req, res) => {
     const bookings = await BookingModel.find()
-
+ 
     // Filter those bookings with the requested date 
     const dateInputValue = req.body.requestedDate
     const hitDateBookings = bookings.filter(function (booking) {
         return booking.date.toString().includes(dateInputValue)
     })
 
-    console.log(req.body.requestedNoOfGuests)
-    console.log(req.body.requestedDate)
-
     // Calulating by the number of guests requested 
     const guestInputValue = req.body.requestedNoOfGuests 
     const amountOfTables = guestInputValue / 6
-    const totalAmoutOfTables = Math.ceil(amountOfTables)
+    const totalTablesRequested = Math.ceil(amountOfTables)
 
     // Filter and count those requested date bookings of the time slot 18
     const eightteenTime = "18" 
@@ -28,17 +25,16 @@ const eightteenChecking = async(req, res) => {
         
     // Comparing if the tables at 18 has enough for the requested guests/tables
     try {
-        if (eightteenBookings >= 15 - totalAmoutOfTables) {
+        if (eightteenBookings + totalTablesRequested > 15) {
             console.log("No availability at 18:00 according to your requests")
-            return false
+            return res.send(false)
         } else {
             console.log("Yes, at 18:00 is available to book")
-            return true
+            return res.send(true)
         }
     } catch (err) {
         console.log(err)
     }
-
 }
 
 /* CHECKING availability at 21:00 with the API /reservations/checkingTwentyone */
@@ -54,7 +50,7 @@ const twentyoneChecking = async(req, res) => {
     // Calulating by the number of guests requested 
     const guestInputValue = req.body.requestedNoOfGuests 
     const amountOfTables = guestInputValue / 6
-    const totalAmoutOfTables = Math.ceil(amountOfTables)
+    const totalTablesRequested = Math.ceil(amountOfTables)
 
     // Filter and count those requested date bookings of the time slot 21 
     const twentyoneTime = "21" 
@@ -64,15 +60,12 @@ const twentyoneChecking = async(req, res) => {
     
     // Comparing if the tables at 21 has enough for the requested guests/tables
     try {
-        if (twentyoneBookings >= 15 - totalAmoutOfTables) {
+        if (twentyoneBookings + totalTablesRequested > 15) {
             console.log("No availability at 21:00 according to your requests")
-            return false
+            return res.send(false)
         } else {
             console.log("Yes, at 21:00 is available to book")
-           /*  return res.json({
-                avalable: true,
-                timeSlot: '21:00'
-            }) */
+            return res.send(true)
         }
     } catch (err) {
         console.log(err)
@@ -83,9 +76,10 @@ const twentyoneChecking = async(req, res) => {
 const createReservations = async(req, res) => {
     try {
         const booking = new BookingModel({
+            _id: "",
             id: 3,
             numberOfGuests: 5,
-            date: new Date(),
+            date: "",
             time: 18.00,
             firstName: "firstname",
             lastName: "lastName",
