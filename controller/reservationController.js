@@ -72,23 +72,23 @@ const twentyoneChecking = async(req, res) => {
     }
 } 
 
-/* CREATE - An api endpoint for /RESERVATION */
+/* CREATE - An api endpoint for /reservations/confirmation */
 const createReservations = async(req, res) => {
     try {
         const booking = new BookingModel({
-            _id: "",
-            id: 3,
-            numberOfGuests: 5,
-            date: "",
-            time: 18.00,
-            firstName: "firstname",
-            lastName: "lastName",
-            phone: 123456789,
-            email: "dummy@email.com",
-            specialRequest: "No Smoke"
+            id: req.body.newBooking.id,
+            numberOfGuests: req.body.newBooking.numberOfGuests,
+            date: req.body.newBooking.date,
+            time: req.body.newBooking.time,
+            firstName: req.body.newBooking.firstName,
+            lastName: req.body.newBooking.lastName,
+            phone: req.body.newBooking.phone,
+            email: req.body.newBooking.email,
+            specialRequest: req.body.newBooking.specialRequest
         })
+    
         await booking.save()
-        res.send("Thank you for your reservation")
+        res.send("Thank you for your reservation from the backend")
     } catch (err) {
         console.log(err)
     }
