@@ -14,11 +14,10 @@ const renderBookingsAdmin = async(req, res) => {
 
 const deleteBookingAdmin = async(req, res) => {
     try {
-        const idParams = req.body.params
-        //const idToString = idParams.toString()
-        
+        const idParams = req.params.id
         await BookingModel.deleteOne({_id: idParams});
-        res.send("delete")
+        res.send(idParams)
+        window.location.reload()
     } catch (err) {
         console.log(err)
     } 
