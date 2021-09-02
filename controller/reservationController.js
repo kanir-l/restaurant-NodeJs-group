@@ -5,8 +5,8 @@ const BookingModel = require('../models/BookingSchema')
 /* CHECKING availability at 18:00 with the API /reservations/checkingEightteen */
 const eightteenChecking = async(req, res) => {
     const bookings = await BookingModel.find()
- 
-    // Filter those bookings with the requested date 
+
+    // Filter bookings with the requested date 
     const dateInputValue = req.body.requestedDate
     const hitDateBookings = bookings.filter(function (booking) {
         return booking.date.toString().includes(dateInputValue)
@@ -17,15 +17,24 @@ const eightteenChecking = async(req, res) => {
     const amountOfTables = guestInputValue / 6
     const totalTablesRequested = Math.ceil(amountOfTables)
 
-    // Filter and count those requested date bookings of the time slot 18
+    // Filter by requested date bookings with the time slot 18
     const eightteenTime = "18" 
     const eightteenBookings = hitDateBookings.filter(function (booking) {
         return booking.time.toString() == eightteenTime
-    }).length
-        
-    // Comparing if the tables at 18 has enough for the requested guests/tables
+    })
+
+    // Map out the no of guests of the the 18 bookings
+    const noOfGuestsBookings = eightteenBookings.map(booking => booking.numberOfGuests)
+
+    // Devide each of guests booked with 6 to get the number of tables
+    const devideTablesBooked = noOfGuestsBookings.map(guests => guests / 6)
+    const totalTablesBooked = devideTablesBooked.map(table => Math.ceil(table))
+
+    // Sum up the number of tables booked
+    const sumTablesBooked = totalTablesBooked.reduce((a, b) => a + b, 0)
+    
     try {
-        if (eightteenBookings + totalTablesRequested > 15) {
+        if (sumTablesBooked + totalTablesRequested > 15) {
             console.log("No availability at 18:00 according to your requests")
             return res.send(false)
         } else {
@@ -41,8 +50,8 @@ const eightteenChecking = async(req, res) => {
 const twentyoneChecking = async(req, res) => { 
     const bookings = await BookingModel.find()
 
-    // Filter those bookings with the requested date 
-    const dateInputValue = req.body.requestedDate
+    // Filter bookings with the requested date 
+    const dateInputValue = req.body.requestedDate 
     const hitDateBookings = bookings.filter(function (booking) {
         return booking.date.toString().includes(dateInputValue)
     })
@@ -52,15 +61,25 @@ const twentyoneChecking = async(req, res) => {
     const amountOfTables = guestInputValue / 6
     const totalTablesRequested = Math.ceil(amountOfTables)
 
-    // Filter and count those requested date bookings of the time slot 21 
+    // Filter by requested date bookings with the time slot 21
     const twentyoneTime = "21" 
     const twentyoneBookings = hitDateBookings.filter(function (booking) {
-        return booking.time.toString() == twentyoneTime
-    }).length
+        return booking.time.toString() === twentyoneTime
+    })
+
+    // Map out the no of guests of the the 21 bookings
+    const noOfGuestsBookings = twentyoneBookings.map(booking => booking.numberOfGuests)
+
+    // Devide each of guests booked with 6 to get the number of tables
+    const devideTablesBooked = noOfGuestsBookings.map(guests => guests / 6)
+    const totalTablesBooked = devideTablesBooked.map(table => Math.ceil(table))
+     
+    // Sum up the number of tables booked
+    const sumTablesBooked = totalTablesBooked.reduce((a, b) => a + b, 0)
     
     // Comparing if the tables at 21 has enough for the requested guests/tables
     try {
-        if (twentyoneBookings + totalTablesRequested > 15) {
+        if (sumTablesBooked + totalTablesRequested > 15) {
             console.log("No availability at 21:00 according to your requests")
             return res.send(false)
         } else {

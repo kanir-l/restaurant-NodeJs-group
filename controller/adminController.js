@@ -10,16 +10,25 @@ const renderBookingsAdmin = async(req, res) => {
     } catch (err) {
         console.log(err)
     }
-};
+}
 
-/* DELETE - An api endpoint for /ADMIN/DELETE/:ID
-    const deleteBookingAdmin
- */
+const deleteBookingAdmin = async(req, res) => {
+    try {
+        const idParams = req.body.params
+        //const idToString = idParams.toString()
+        
+        await BookingModel.deleteOne({_id: idParams});
+        res.send("delete")
+    } catch (err) {
+        console.log(err)
+    } 
+}
 
 /* UPDATE - An api endpoint for /ADMIN/EDIT/:ID
     const updateBookingAdmin */
 
 
 module.exports= {
-    renderBookingsAdmin
+    renderBookingsAdmin,
+    deleteBookingAdmin
 }
