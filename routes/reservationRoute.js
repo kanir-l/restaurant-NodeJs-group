@@ -1,9 +1,8 @@
 const express = require("express");
-const { eightteenChecking, twentyoneChecking, createReservations } = require("../controller/reservationController");
+const { sendingAvailability, createReservations } = require("../controller/reservationController");
 const router = express.Router();
 
-router.post("/reservations/checkingEightteen", eightteenChecking);
-router.post("/reservations/checkingTwentyone", twentyoneChecking);
+router.get("/reservations/checkingAvailability", sendingAvailability); ////Vet inte om denna path är fel????
 router.post("/reservations/confirmation", createReservations);
 
 module.exports = router;
