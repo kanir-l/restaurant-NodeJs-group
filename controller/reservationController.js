@@ -1,6 +1,6 @@
 const express = require("express")
 const BookingModel = require('../models/BookingSchema')
-    // const path = require('path')
+
 
 const sendingAvailability = async(req, res) => {
 
@@ -12,18 +12,16 @@ const sendingAvailability = async(req, res) => {
         return booking.date.includes(reqDate)
     })
 
-    console.log(req.params.date);
-
     // Calulating by the number of guests requested 
-    const reqGuests = req.params.numberOfGuests;
+    const reqGuests = req.query.numberOfGuests;
     const reqTablesMath = reqGuests / 6;
     const reqTables = Math.ceil(reqTablesMath);
 
     const checkingAvailability = (timeslot) => {
         const slotBookings = bookingsOnReqDate.filter(function(booking) {
-                return booking.time === timeslot;
-            })
-            // Map out the no of guests that are already booked on that slot
+            return booking.time === timeslot;
+        })
+        // Map out the no of guests that are already booked on that slot
         const slotGuests = slotBookings.map(booking => booking.numberOfGuests);
 
         // Loop all of the bookings and divide each guestnumber with 6 to get the number of tables occupied.
@@ -45,15 +43,13 @@ const sendingAvailability = async(req, res) => {
             console.log(err)
         }
     }
-
     const slot1Availability = checkingAvailability(18);
     const slot2Availability = checkingAvailability(21);
 
-    return res.send({
-        slot1: slot1Availability,
-        slot2: slot2Availability
-    });
-
+    res.send({
+        slot1Availability,
+        slot2Availability
+    })
 }
 
 
@@ -79,7 +75,10 @@ const createReservations = async(req, res) => {
     }
 }
 
-module.exports = {
-    sendingAvailability,
-    createReservations
+
+module.exports= {
+    
+    createReservations,
+    sendingAvailability
+
 }
