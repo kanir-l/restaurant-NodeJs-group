@@ -7,28 +7,33 @@ const sendingAvailability = async(req, res) => {
     const bookings = await BookingModel.find()
 
     // Filter bookings with the requested date 
-    const reqDate = req.params.requestedDate
+    const reqDate = req.params.date;
     const bookingsOnReqDate = bookings.filter(function(booking) {
-        return booking.date.toString().includes(reqDate)
+        return booking.date.includes(reqDate)
     })
 
+    console.log(req.params.date);
+
     // Calulating by the number of guests requested 
-    const reqGuests = req.params.requestedNoOfGuests
-    const reqTables = Math.ceil(reqGuests / 6);
+    const reqGuests = req.params.numberOfGuests;
+    const reqTablesMath = reqGuests / 6;
+    const reqTables = Math.ceil(reqTablesMath);
 
     const checkingAvailability = (timeslot) => {
-
         const slotBookings = bookingsOnReqDate.filter(function(booking) {
-                return booking.time.toString() === timeslot;
+                return booking.time === timeslot;
             })
             // Map out the no of guests that are already booked on that slot
         const slotGuests = slotBookings.map(booking => booking.numberOfGuests);
 
-        // Loop all of the bookings and devide each guestnumber with 6 to get the number of tables filled.
-        const slotTables = slotGuests.map(guests => Math.ceil(guests / 6))
+        // Loop all of the bookings and divide each guestnumber with 6 to get the number of tables occupied.
+        const slotTables = slotGuests.map(guests => guests / 6);
+
+        //Round up where there are decimals
+        const occupiedTables = slotTables.map(table => Math.ceil(table));
 
         // Sum up the number of tables booked on that slot
-        const sumSlotTables = slotTables.reduce((a, b) => a + b, 0);
+        const sumSlotTables = occupiedTables.reduce((a, b) => a + b, 0);
 
         try {
             if (sumSlotTables + reqTables > 15) {
