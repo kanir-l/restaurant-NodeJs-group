@@ -7,7 +7,7 @@ const sendingAvailability = async(req, res) => {
     const bookings = await BookingModel.find()
 
     // Filter bookings with the requested date 
-    const reqDate = req.params.date;
+    const reqDate = req.query.date;
     const bookingsOnReqDate = bookings.filter(function(booking) {
         return booking.date.includes(reqDate)
     })
