@@ -20,8 +20,10 @@ const sendingAvailability = async(req, res) => {
     const checkingAvailability = (timeslot) => {
         const slotBookings = bookingsOnReqDate.filter(function(booking) {
                 return booking.time === timeslot;
-            })
-            // Map out the no of guests that are already booked on that slot
+        })
+
+            
+        // Map out the no of guests that are already booked on that slot
         const slotGuests = slotBookings.map(booking => booking.numberOfGuests);
 
         // Loop all of the bookings and divide each guestnumber with 6 to get the number of tables occupied.
