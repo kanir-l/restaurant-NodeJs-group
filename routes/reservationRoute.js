@@ -4,7 +4,6 @@ const {sendingAvailability, createReservations } = require("../controller/reserv
 const router = express.Router();
 
 router.get("/reservations/checkingAvailability", sendingAvailability)
-
 router.post("/reservations/confirmation", createReservations);
 
 module.exports = router;
