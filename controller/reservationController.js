@@ -1,18 +1,18 @@
-const express = require("express")
-const BookingModel = require('../models/BookingSchema')
+const express = require("express");
+const BookingModel = require('../models/BookingSchema');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 
 const sendingAvailability = async(req, res) => {
 
-    const bookings = await BookingModel.find()
+    const bookings = await BookingModel.find();
 
     // Filter bookings with the requested date 
     const reqDate = req.query.date;
     const bookingsOnReqDate = bookings.filter(function(booking) {
-        return booking.date.includes(reqDate)
-    })
+        return booking.date.includes(reqDate);
+    });
 
     // Calulating by the number of guests requested 
     const reqGuests = req.query.numberOfGuests;
@@ -21,10 +21,9 @@ const sendingAvailability = async(req, res) => {
 
     const checkingAvailability = (timeslot) => {
         const slotBookings = bookingsOnReqDate.filter(function(booking) {
-                return booking.time === timeslot;
+            return booking.time === timeslot;
         })
 
-            
         // Map out the no of guests that are already booked on that slot
         const slotGuests = slotBookings.map(booking => booking.numberOfGuests);
 
@@ -39,12 +38,12 @@ const sendingAvailability = async(req, res) => {
 
         try {
             if (sumSlotTables + reqTables > 15) {
-                return (false)
+                return (false);
             } else {
-                return (true)
+                return (true);
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
     const slot1Availability = checkingAvailability(18);
@@ -53,9 +52,8 @@ const sendingAvailability = async(req, res) => {
     return res.send({
         slot1Availability,
         slot2Availability
-    })
+    });
 }
-
 
 /* CREATE - An api endpoint for /reservations/confirmation */
 const createReservations = async(req, res) => {
@@ -102,14 +100,11 @@ const createReservations = async(req, res) => {
             }
         });
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 }
 
-
 module.exports = {
-
     createReservations,
     sendingAvailability
-
 }
