@@ -16,13 +16,13 @@ app.use(bodyParser.urlencoded({
 // *** MongoDB connection ***
 connectDB();
 
+app.use(adminRoute)
+app.use(reservationRoute)
 // *** Create Local Server ***
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-app.use(adminRoute)
-app.use(reservationRoute)
 
 

@@ -24,7 +24,6 @@ const deleteBookingAdmin = async(req, res) => {
     } 
 }
 
-
 const sendingAvailabilityEdit = async(req, res) => {
     const bookings = await BookingModel.find()
 
@@ -48,8 +47,6 @@ const sendingAvailabilityEdit = async(req, res) => {
         const slotBookings = bookingsOnReqDate.filter(function(booking) {
                 return booking.time === timeslot;
         })
-
-            
         // Map out the no of guests that are already booked on that slot
         const slotGuests = slotBookings.map(booking => booking.numberOfGuests);
 
@@ -81,7 +78,7 @@ const sendingAvailabilityEdit = async(req, res) => {
     })
 }
 
-/* UPDATE - An api endpoint for /ADMIN/EDIT/:ID */
+/* UPDATE - An api endpoint for /ADMIN/UPDATE */
 const updateBookingAdmin = async(req, res) => {
     const idBooking = req.body.updatedRes._id
     
