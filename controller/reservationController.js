@@ -1,5 +1,7 @@
 const express = require("express")
 const BookingModel = require('../models/BookingSchema')
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 
 
 const sendingAvailability = async(req, res) => {
@@ -57,6 +59,19 @@ const sendingAvailability = async(req, res) => {
 
 /* CREATE - An api endpoint for /reservations/confirmation */
 const createReservations = async(req, res) => {
+    const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_SERVICE,
+        port: process.env.EMAIL_PORT,
+        secure: true,
+        auth: {
+            user: process.env.RESET_EMAIL,
+            pass: process.env.RESET_PASSWORD
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
     try {
         const booking = new BookingModel({
             id: req.body.newBooking.id,
@@ -68,10 +83,24 @@ const createReservations = async(req, res) => {
             phone: req.body.newBooking.phone,
             email: req.body.newBooking.email,
             specialRequest: req.body.newBooking.specialRequest
-        })
+        });
 
-        await booking.save()
-        res.send("Thank you for your reservation from the backend")
+        await booking.save();
+        res.send("Thank you for your reservation from the backend");
+
+        transporter.sendMail({
+            from: process.env.RESET_EMAIL,
+            to: `${req.body.newBooking.email}`,
+            subject: "Reservation details",
+            text: "Hello, this mail is a test in text!",
+            html: `<h2>Hello, this mail is a test in HTML!</h2>`
+        }, (err, info) => {
+            if (err) {
+                return console.log("Error log from nodemailer" + err);
+            } else {
+                return console.log("Info log from nodemailer" + info.response);
+            }
+        });
     } catch (err) {
         console.log(err)
     }
