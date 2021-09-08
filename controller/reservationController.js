@@ -82,7 +82,7 @@ const createReservations = async(req, res) => {
             specialRequest: req.body.newBooking.specialRequest
         })
         await booking.save()
-        return res.send(booking)
+        res.send(booking) //removed the return, caused the mail not to run
       
         transporter.sendMail({
             from: process.env.RESET_EMAIL,
@@ -100,6 +100,8 @@ const createReservations = async(req, res) => {
             <p>Hi ${req.body.newBooking.firstName},</p>
             <br>
             <p>Your reservation at has been made at Seafood Restaurant.</p>
+            <p>If you wish to cancel your reservation click this link:</p>
+            <a href="http://localhost:8080/reservations/delete/${booking._id}">Cancel reservation</a>
             <br>
             <p>Looking forward to serve you!</p>`
         }, (err, info) => {
@@ -114,7 +116,18 @@ const createReservations = async(req, res) => {
     }
 }
 
+const deleteReservation = async(req, res) => {
+    try {
+        console.log("Trying... " + req.params._id);
+        // res.send("Wish to cancel reservation?");
+        
+    } catch {
+        console.log("Gave up trying...");
+    }
+}
+
 module.exports = {
     createReservations,
-    sendingAvailability
+    sendingAvailability,
+    deleteReservation
 }
