@@ -8,13 +8,13 @@ const sendingAvailability = async(req, res) => {
 
     const bookings = await BookingModel.find();
 
-    // Filter bookings with the requested date 
+    // Filter bookings with the requested date
     const reqDate = req.query.date;
     const bookingsOnReqDate = bookings.filter(function(booking) {
         return booking.date.includes(reqDate);
     });
 
-    // Calulating by the number of guests requested 
+    // Calulating by the number of guests requested
     const reqGuests = req.query.numberOfGuests;
     const reqTablesMath = reqGuests / 6;
     const reqTables = Math.ceil(reqTablesMath);
@@ -90,8 +90,20 @@ const createReservations = async(req, res) => {
             from: process.env.RESET_EMAIL,
             to: `${req.body.newBooking.email}`,
             subject: "Reservation details",
-            text: "Hello, this mail is a test in text!",
-            html: `<h2>Hello, this mail is a test in HTML!</h2>`
+            text: `Seafood Restaurant - Reservation booked. Booking details: ${req.body.newBooking.date} at 
+            ${req.body.newBooking.time}:00. Booked in the name of ${req.body.newBooking.firstName} ${req.body.newBooking.lastName}.
+            Looking forward to serve you!`,
+            html: `<h3>Seafood Restaurant</h3>
+            <h1>Reservation booked.</h1>
+            <ul>
+              <li>${req.body.newBooking.date} at ${req.body.newBooking.time}:00</li>
+              <li>Party of ${req.body.newBooking.numberOfGuests}</li>
+            </ul>
+            <p>Hi ${req.body.newBooking.firstName},</p>
+            <br>
+            <p>Your reservation at has been made at Seafood Restaurant.</p>
+            <br>
+            <p>Looking forward to serve you!</p>`
         }, (err, info) => {
             if (err) {
                 return console.log("Error log from nodemailer" + err);
