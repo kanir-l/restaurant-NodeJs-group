@@ -55,6 +55,7 @@ const sendingAvailability = async(req, res) => {
     });
 }
 
+// CREATE - An api endpoint for /reservations/confirmation
 const createReservations = async(req, res) => {
     const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_SERVICE,
@@ -82,11 +83,7 @@ const createReservations = async(req, res) => {
         })
         await booking.save()
         return res.send(booking)
-        });
-
-        await booking.save();
-        res.send("Thank you for your reservation from the backend");
-
+      
         transporter.sendMail({
             from: process.env.RESET_EMAIL,
             to: `${req.body.newBooking.email}`,
@@ -111,7 +108,7 @@ const createReservations = async(req, res) => {
             } else {
                 return console.log("Info log from nodemailer" + info.response);
             }
-        });
+        })
     } catch (err) {
         console.log(err);
     }
