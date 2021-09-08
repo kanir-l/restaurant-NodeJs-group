@@ -1,9 +1,8 @@
 const express = require("express")
 const BookingModel = require('../models/BookingSchema')
 
-
+// Request the bookings with condition values recieved from react
 const sendingAvailability = async(req, res) => {
-
     const bookings = await BookingModel.find()
 
     // Filter bookings with the requested date 
@@ -21,8 +20,7 @@ const sendingAvailability = async(req, res) => {
         const slotBookings = bookingsOnReqDate.filter(function(booking) {
                 return booking.time === timeslot;
         })
-
-            
+ 
         // Map out the no of guests that are already booked on that slot
         const slotGuests = slotBookings.map(booking => booking.numberOfGuests);
 
@@ -45,6 +43,7 @@ const sendingAvailability = async(req, res) => {
             console.log(err)
         }
     }
+
     const slot1Availability = checkingAvailability(18);
     const slot2Availability = checkingAvailability(21);
 
@@ -54,12 +53,10 @@ const sendingAvailability = async(req, res) => {
     })
 }
 
-
-/* CREATE - An api endpoint for /reservations/confirmation */
+// CREATE - An api endpoint for /reservations/confirmation 
 const createReservations = async(req, res) => {
     try {
         const booking = new BookingModel({
-            id: req.body.newBooking.id,
             numberOfGuests: req.body.newBooking.numberOfGuests,
             date: req.body.newBooking.date,
             time: req.body.newBooking.time,
@@ -69,17 +66,14 @@ const createReservations = async(req, res) => {
             email: req.body.newBooking.email,
             specialRequest: req.body.newBooking.specialRequest
         })
-
         await booking.save()
-        res.send("Thank you for your reservation from the backend")
+        return res.send(booking)
     } catch (err) {
         console.log(err)
     }
 }
 
-
 module.exports = {
-
     createReservations,
     sendingAvailability
 
