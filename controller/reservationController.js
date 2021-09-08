@@ -1,26 +1,28 @@
-const express = require("express")
-const BookingModel = require('../models/BookingSchema')
+const express = require("express");
+const BookingModel = require('../models/BookingSchema');
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 
 // Request the bookings with condition values recieved from react
 const sendingAvailability = async(req, res) => {
     const bookings = await BookingModel.find()
 
-    // Filter bookings with the requested date 
+    // Filter bookings with the requested date
     const reqDate = req.query.date;
     const bookingsOnReqDate = bookings.filter(function(booking) {
-        return booking.date.includes(reqDate)
-    })
+        return booking.date.includes(reqDate);
+    });
 
-    // Calulating by the number of guests requested 
+    // Calulating by the number of guests requested
     const reqGuests = req.query.numberOfGuests;
     const reqTablesMath = reqGuests / 6;
     const reqTables = Math.ceil(reqTablesMath);
 
     const checkingAvailability = (timeslot) => {
         const slotBookings = bookingsOnReqDate.filter(function(booking) {
-                return booking.time === timeslot;
+            return booking.time === timeslot;
         })
- 
+
         // Map out the no of guests that are already booked on that slot
         const slotGuests = slotBookings.map(booking => booking.numberOfGuests);
 
@@ -35,12 +37,12 @@ const sendingAvailability = async(req, res) => {
 
         try {
             if (sumSlotTables + reqTables > 15) {
-                return (false)
+                return (false);
             } else {
-                return (true)
+                return (true);
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
@@ -50,11 +52,23 @@ const sendingAvailability = async(req, res) => {
     return res.send({
         slot1Availability,
         slot2Availability
-    })
+    });
 }
 
-// CREATE - An api endpoint for /reservations/confirmation 
 const createReservations = async(req, res) => {
+    const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_SERVICE,
+        port: process.env.EMAIL_PORT,
+        secure: true,
+        auth: {
+            user: process.env.RESET_EMAIL,
+            pass: process.env.RESET_PASSWORD
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
     try {
         const booking = new BookingModel({
             numberOfGuests: req.body.newBooking.numberOfGuests,
@@ -68,13 +82,42 @@ const createReservations = async(req, res) => {
         })
         await booking.save()
         return res.send(booking)
+        });
+
+        await booking.save();
+        res.send("Thank you for your reservation from the backend");
+
+        transporter.sendMail({
+            from: process.env.RESET_EMAIL,
+            to: `${req.body.newBooking.email}`,
+            subject: "Reservation details",
+            text: `Seafood Restaurant - Reservation booked. Booking details: ${req.body.newBooking.date} at 
+            ${req.body.newBooking.time}:00. Booked in the name of ${req.body.newBooking.firstName} ${req.body.newBooking.lastName}.
+            Looking forward to serve you!`,
+            html: `<h3>Seafood Restaurant</h3>
+            <h1>Reservation booked.</h1>
+            <ul>
+              <li>${req.body.newBooking.date} at ${req.body.newBooking.time}:00</li>
+              <li>Party of ${req.body.newBooking.numberOfGuests}</li>
+            </ul>
+            <p>Hi ${req.body.newBooking.firstName},</p>
+            <br>
+            <p>Your reservation at has been made at Seafood Restaurant.</p>
+            <br>
+            <p>Looking forward to serve you!</p>`
+        }, (err, info) => {
+            if (err) {
+                return console.log("Error log from nodemailer" + err);
+            } else {
+                return console.log("Info log from nodemailer" + info.response);
+            }
+        });
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 }
 
 module.exports = {
     createReservations,
     sendingAvailability
-
 }
