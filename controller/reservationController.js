@@ -3,10 +3,9 @@ const BookingModel = require('../models/BookingSchema');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
-
+// Request the bookings with condition values recieved from react
 const sendingAvailability = async(req, res) => {
-
-    const bookings = await BookingModel.find();
+    const bookings = await BookingModel.find()
 
     // Filter bookings with the requested date
     const reqDate = req.query.date;
@@ -46,6 +45,7 @@ const sendingAvailability = async(req, res) => {
             console.log(err);
         }
     }
+
     const slot1Availability = checkingAvailability(18);
     const slot2Availability = checkingAvailability(21);
 
@@ -55,7 +55,6 @@ const sendingAvailability = async(req, res) => {
     });
 }
 
-/* CREATE - An api endpoint for /reservations/confirmation */
 const createReservations = async(req, res) => {
     const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_SERVICE,
@@ -72,7 +71,6 @@ const createReservations = async(req, res) => {
 
     try {
         const booking = new BookingModel({
-            id: req.body.newBooking.id,
             numberOfGuests: req.body.newBooking.numberOfGuests,
             date: req.body.newBooking.date,
             time: req.body.newBooking.time,
@@ -81,6 +79,9 @@ const createReservations = async(req, res) => {
             phone: req.body.newBooking.phone,
             email: req.body.newBooking.email,
             specialRequest: req.body.newBooking.specialRequest
+        })
+        await booking.save()
+        return res.send(booking)
         });
 
         await booking.save();

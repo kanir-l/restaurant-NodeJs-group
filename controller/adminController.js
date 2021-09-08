@@ -1,8 +1,7 @@
 const express = require("express")
 const BookingModel = require('../models/BookingSchema')
-// const path = require('path')
 
-// READ - An api endpoint for /ADMIN
+// READ - An api endpoint for /admin
 const renderBookingsAdmin = async(req, res) => {
     try {
         const bookings = await BookingModel.find()
@@ -12,22 +11,22 @@ const renderBookingsAdmin = async(req, res) => {
     }
 }
 
-/* DELETE - An api endpoint for /ADMIN/DELETE/:ID */
+// DELETE - An api endpoint for /admin/delete/:id
 const deleteBookingAdmin = async(req, res) => {
     try {
         const idParams = req.params.id
         await BookingModel.deleteOne({_id: idParams})
         res.send(idParams)
-        window.location.reload()
     } catch (err) {
         console.log(err)
     } 
 }
 
+// Request the bookings with condition values recieved from react
 const sendingAvailabilityEdit = async(req, res) => {
     const bookings = await BookingModel.find()
 
-    // Filter bookings without the current editing booking Id
+    // Filter bookings WITHOUT THE CURRENT EDITING BOOKING ID
     const allExceptEditedBooking = bookings.filter(function(booking) {
         return String(booking._id) !== String(req.query._id)
     })
@@ -69,6 +68,7 @@ const sendingAvailabilityEdit = async(req, res) => {
             console.log(err)
         }
     }
+
     const slot1Availability = checkingAvailability(18);
     const slot2Availability = checkingAvailability(21);
 
@@ -78,10 +78,9 @@ const sendingAvailabilityEdit = async(req, res) => {
     })
 }
 
-/* UPDATE - An api endpoint for /ADMIN/UPDATE */
+// UPDATE - An api endpoint for /admin/update
 const updateBookingAdmin = async(req, res) => {
     const idBooking = req.body.updatedRes._id
-    
     try {
         await BookingModel.findById(idBooking, (err, updatedBooking) => {
             updatedBooking.numberOfGuests = req.body.updatedRes.numberOfGuests
@@ -101,10 +100,22 @@ const updateBookingAdmin = async(req, res) => {
     }
 }
 
+// READ a specific booking ID - An api endpoint for /admin/:id 
+const renderBooking = async(req, res) => {
+    try {
+        const idParams = req.params.id
+        await BookingModel.findById(idParams, (err, booking) => {
+            res.json(booking)
+        })
+    } catch (err) {
+        console.log(err)
+    }
+} 
 
 module.exports= {
     renderBookingsAdmin,
     deleteBookingAdmin,
     sendingAvailabilityEdit,
     updateBookingAdmin,
+    renderBooking
 }
