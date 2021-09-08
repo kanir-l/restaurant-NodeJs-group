@@ -101,7 +101,7 @@ const createReservations = async(req, res) => {
             <br>
             <p>Your reservation at has been made at Seafood Restaurant.</p>
             <p>If you wish to cancel your reservation click this link:</p>
-            <a href="http://localhost:8080/reservations/delete/${booking._id}">Cancel reservation</a>
+            <a href="http://localhost:3000/reservations/delete/${booking._id}">Cancel reservation</a>
             <br>
             <p>Looking forward to serve you!</p>`
         }, (err, info) => {
@@ -118,11 +118,11 @@ const createReservations = async(req, res) => {
 
 const deleteReservation = async(req, res) => {
     try {
-        console.log("Trying... " + req.params._id);
-        // res.send("Wish to cancel reservation?");
-        
-    } catch {
-        console.log("Gave up trying...");
+        const idParams = req.params.id;
+        await BookingModel.deleteOne({_id: idParams});
+        res.send("Deleting the reservation of: " + idParams);
+    } catch (error) {
+        console.log(error);
     }
 }
 
