@@ -1,5 +1,6 @@
-const express = require("express")
-const BookingModel = require('../models/BookingSchema')
+const BookingModel = require('../models/BookingSchema');
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 
 // READ - An api endpoint for /admin
 const renderBookingsAdmin = async(req, res) => {
@@ -13,12 +14,48 @@ const renderBookingsAdmin = async(req, res) => {
 
 // DELETE - An api endpoint for /admin/delete/:id
 const deleteBookingAdmin = async(req, res) => {
+    const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_SERVICE,
+        port: process.env.EMAIL_PORT,
+        secure: true,
+        auth: {
+            user: process.env.RESET_EMAIL,
+            pass: process.env.RESET_PASSWORD
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
     try {
         const idParams = req.params.id
-        await BookingModel.deleteOne({_id: idParams})
-        res.send(idParams)
+        const booking = await BookingModel.findById(idParams, (err, booking) => {
+            res.json(booking);
+        });
+
+        transporter.sendMail({
+            from: process.env.RESET_EMAIL,
+            to: `${booking.email}`,
+            subject: "L'Isola - Reservation cancelled",
+            text: `L'Isola - Your reservation has been cancelled.`,
+            html: `<h3>L'Isola</h3>
+            <p>Your reservation has been cancelled.</p>
+            <p>We hope to see you some other time!</p>
+            <p>If you wish to make a new reservation <a href="http://localhost:3000/reservations">click here.</a></p>
+            
+            `
+        }, (err, info) => {
+            if (err) {
+                return console.log("Error log from nodemailer " + err);
+            } else {
+                return console.log("Cancel mail has been sent " + info.response);
+            }
+        });
+
+        await BookingModel.deleteOne({_id: idParams});
+        // res.send(idParams);
     } catch (err) {
-        console.log(err)
+        console.log(err);
     } 
 }
 
