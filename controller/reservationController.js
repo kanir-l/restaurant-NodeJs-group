@@ -101,7 +101,7 @@ const createReservations = async(req, res) => {
             <br>
             <p>Your reservation at has been made at Seafood Restaurant.</p>
             <p>If you wish to cancel your reservation click this link:</p>
-            <a href="http://localhost:3000/reservations/delete/${booking._id}">Cancel reservation</a>
+            <a href="http://localhost:3000/admin/${booking._id}">Cancel reservation</a>
             <br>
             <p>Looking forward to serve you!</p>`
         }, (err, info) => {
