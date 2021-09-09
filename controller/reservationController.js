@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 
 // Request the bookings with condition values recieved from react
 const sendingAvailability = async(req, res) => {
-    const bookings = await BookingModel.find()
+    const bookings = await BookingModel.find();
 
     // Filter bookings with the requested date
     const reqDate = req.query.date;
@@ -91,7 +91,7 @@ const createReservations = async(req, res) => {
             text: `Seafood Restaurant - Reservation booked. Booking details: ${req.body.newBooking.date} at 
             ${req.body.newBooking.time}:00. Booked in the name of ${req.body.newBooking.firstName} ${req.body.newBooking.lastName}.
             Looking forward to serve you!`,
-            html: `<h3>Seafood Restaurant</h3>
+            html: `<h3>L'Isola</h3>
             <h1>Reservation booked.</h1>
             <ul>
               <li>${req.body.newBooking.date} at ${req.body.newBooking.time}:00</li>
@@ -99,16 +99,16 @@ const createReservations = async(req, res) => {
             </ul>
             <p>Hi ${req.body.newBooking.firstName},</p>
             <br>
-            <p>Your reservation at has been made at Seafood Restaurant.</p>
+            <p>Your reservation at has been made.</p>
             <p>If you wish to cancel your reservation click this link:</p>
             <a href="http://localhost:3000/admin/${booking._id}">Cancel reservation</a>
             <br>
             <p>Looking forward to serve you!</p>`
         }, (err, info) => {
             if (err) {
-                return console.log("Error log from nodemailer" + err);
+                return console.log("Error log from nodemailer " + err);
             } else {
-                return console.log("Info log from nodemailer" + info.response);
+                return console.log("Confirmation mail have been " + info.response);
             }
         })
     } catch (err) {
