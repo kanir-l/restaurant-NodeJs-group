@@ -5,10 +5,10 @@ const nodemailer = require('nodemailer');
 // READ - An api endpoint for /admin
 const renderBookingsAdmin = async(req, res) => {
     try {
-        const bookings = await BookingModel.find()
-        res.json(bookings)
+        const bookings = await BookingModel.find();
+        res.json(bookings);
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 }
 
@@ -28,7 +28,7 @@ const deleteBookingAdmin = async(req, res) => {
     });
 
     try {
-        const idParams = req.params.id
+        const idParams = req.params.id;
         const booking = await BookingModel.findById(idParams, (err, booking) => {
             res.json(booking);
         });
@@ -53,7 +53,6 @@ const deleteBookingAdmin = async(req, res) => {
         });
 
         await BookingModel.deleteOne({_id: idParams});
-        // res.send(idParams);
     } catch (err) {
         console.log(err);
     } 
@@ -61,17 +60,17 @@ const deleteBookingAdmin = async(req, res) => {
 
 // Request the bookings with condition values recieved from react
 const sendingAvailabilityEdit = async(req, res) => {
-    const bookings = await BookingModel.find()
+    const bookings = await BookingModel.find();
 
     // Filter bookings WITHOUT THE CURRENT EDITING BOOKING ID
     const allExceptEditedBooking = bookings.filter(function(booking) {
-        return String(booking._id) !== String(req.query._id)
+        return String(booking._id) !== String(req.query._id);
     })
 
     // Filter bookings with the requested date 
     const reqDate = req.query.date;
     const bookingsOnReqDate = allExceptEditedBooking.filter(function(booking) {
-        return booking.date.includes(reqDate)
+        return booking.date.includes(reqDate);
     })
 
     // Calulating by the number of guests requested 
@@ -97,12 +96,12 @@ const sendingAvailabilityEdit = async(req, res) => {
 
         try {
             if (sumSlotTables + reqTables > 15) {
-                return (false)
+                return (false);
             } else {
-                return (true)
+                return (true);
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
@@ -117,7 +116,7 @@ const sendingAvailabilityEdit = async(req, res) => {
 
 // UPDATE - An api endpoint for /admin/update
 const updateBookingAdmin = async(req, res) => {
-    const idBooking = req.body.updatedRes._id
+    const idBooking = req.body.updatedRes._id;
     try {
         await BookingModel.findById(idBooking, (err, updatedBooking) => {
             updatedBooking.numberOfGuests = req.body.updatedRes.numberOfGuests
@@ -129,23 +128,23 @@ const updateBookingAdmin = async(req, res) => {
             updatedBooking.email = req.body.updatedRes.email
             updatedBooking.specialRequest = req.body.updatedRes.specialRequest
 
-            updatedBooking.save()
-            res.send("Updated the booking from the backend")
+            updatedBooking.save();
+            res.send("Updated the booking from the backend");
         })
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 }
 
 // READ a specific booking ID - An api endpoint for /admin/:id 
 const renderBooking = async(req, res) => {
     try {
-        const idParams = req.params.id
+        const idParams = req.params.id;
         await BookingModel.findById(idParams, (err, booking) => {
-            res.json(booking)
+            res.json(booking);
         })
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 } 
 
